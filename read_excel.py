@@ -1,4 +1,5 @@
-from openpyxl import *
+﻿from openpyxl import *
+from openpyxl.styles import Alignment, Font
 
 class HandleExcel():
     def __init__(self, filenname):
@@ -16,18 +17,15 @@ class HandleExcel():
 
         return column_data
     
-    def write_list_to_column(self, data):
-        max_col = self.active_sheet.max_column + 1
-        print(max_col)
-
+    def write_list_to_column(self, data, col_num):
         for i, item in enumerate(data):
-            self.active_sheet.cell(column=max_col, row=i+1).value = item
+            if i == 0:
+                self.active_sheet.cell(column=col_num, row=i+1).alignment = Alignment(horizontal='center', vertical='center')
+                self.active_sheet.cell(column=col_num, row=i+1).font  = Font(name='Times New Roman')
+            self.active_sheet.cell(column=col_num, row=i+1).value = item
 
         self.handle.save(self.filename)
-
-if __name__ == '__main__':
-    read_file = HandleExcel('/Users/zhaoji/Downloads/b.xlsx')
-    data = read_file.read_all_col('D')
-
-    write_file = HandleExcel('/Users/zhaoji/Downloads/a.xlsx')
-    write_file.write_list_to_column(data)
+ 
+if __name__ == "__main__":
+    read_file = HandleExcel('C:\\Users\\Administrator\\Desktop\\数据处理-zyx\\20230522\\sample1\\1-3\\S1-(1-3)-Total.xlsx')
+    read_file.test()
