@@ -1,13 +1,10 @@
-import asyncio
 import time
 import utils
 import os
 import utils
-import csv
-import aiofiles
+import concurrent.futures
 from read_csv import HandleCsv
 from read_excel import HandleExcel
-from aiocsv import AsyncReader
 
 dir = "C:\\Users\\Administrator\\Desktop\\曾宇翔资料\\数据处理-zyx\\20230522\\sample6\\16-4"
 export_column = "D"
@@ -31,32 +28,23 @@ def get_all_file():
     all_num_files = dict(sorted(all_num_files.items()))
     return {**all_num_files, **other_files}
 
-async def get_data(index, filename):
-    # read_file = HandleCsv(filename)
+def get_data(data):
+    index, filename = data
+    read_file = HandleCsv(filename)
     
-    # data = read_file.read_all_col(export_column)
-
-    col_num = utils.col_to_number(export_column)
-    data = []
-    async with aiofiles.open(filename, 'r') as file:
-        # reader = csv.reader(file)
-        # next(reader)
-
-        # for row in reader:
-        #     data.append(eval(row[col_num]))
-        async for row in AsyncReader(file):
-            data.append(row[3])
+    data = read_file.read_all_col(export_column)
 
     return index, data
 
-async def main():
+def main():
     start_time = time.time()
 
     all_files = get_all_file()
-    task = [get_data(i, file) for i, file in all_files.items()]
-    rel = await asyncio.gather(*task)
-    global write_col
 
+    with concurrent.futures.ProcessPoolExecutor(1) as executor:
+        rel = list(executor.map(get_data, all_files.items()))
+
+    global write_col
     save_file = HandleExcel(dir  + "\\" + save_file_name)
     for data in rel:
         i, d = data
@@ -70,4 +58,5 @@ async def main():
 
     print("Execution Time:", time.time() - start_time)
 
-asyncio.run(main())
+if __name__ == '__main__':
+    main()
