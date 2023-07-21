@@ -1,5 +1,7 @@
 import utils
 import os
+import csv
+import asyncio
 from read_csv import HandleCsv
 from read_excel import HandleExcel
 
@@ -23,7 +25,7 @@ other_files = {}
 for file in utils.findAllFile(dir):
     filename, ext = os.path.splitext(os.path.basename(file))
     
-    if not os.path.isfile(file) or save_file_name in file or  not ext == ".csv":
+    if not os.path.isfile(file) or save_file_name in file or not ext == ".csv":
         continue
 
     if str.isdigit(filename):
@@ -36,7 +38,7 @@ all_num_files = dict(sorted(all_num_files.items()))
 all_files = {**all_num_files, **other_files}
 
 for i, file in all_files.items():
-    read_file = HandleCsv( file)
+    read_file = HandleCsv(file)
     
     data = read_file.read_all_col(export_column)
 
