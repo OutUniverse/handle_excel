@@ -1,7 +1,6 @@
+import time
 import utils
 import os
-import csv
-import asyncio
 from read_csv import HandleCsv
 from read_excel import HandleExcel
 
@@ -13,6 +12,11 @@ save_file_name = input("请输入需要整合到哪个文件: ")
 save_file_name = save_file_name.strip()
 write_col = input("请输入从整合文件的哪一列开始导入: ")
 write_col = utils.col_to_number(write_col) + 1
+
+# dir = "C:\\Users\\Administrator\\Desktop\\曾宇翔资料\\数据处理-zyx\\20230522\\sample6\\16-4"
+# export_column = "D"
+# save_file_name = "total.xlsx"
+# write_col = 1
 
 if '.xlsx' not in save_file_name:
     print("整合文件格式只支持xlsx，请做好文件转化")
@@ -37,6 +41,7 @@ all_num_files = dict(sorted(all_num_files.items()))
 
 all_files = {**all_num_files, **other_files}
 
+# start_time = time.time()
 for i, file in all_files.items():
     read_file = HandleCsv(file)
     
@@ -49,5 +54,5 @@ for i, file in all_files.items():
 
     save_file.write_list_to_column(data, write_col)
     write_col += 1
-
+# print("Execution Time:", time.time() - start_time)
 print("导出完成")
